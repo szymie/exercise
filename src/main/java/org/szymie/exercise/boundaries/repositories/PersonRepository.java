@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface PersonRepository {
     Collection<Person> findAll();
-    Optional<Person> findByName(String name);
-    Person save(Person person);
+    Optional<Person> findByUsername(String username);
+    Optional<Person> save(Person person);
 }

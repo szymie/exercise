@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>exercise</name>
+	<username>exercise</username>
 	<description>Demo project for BRAG</description>
 
 	<parent>

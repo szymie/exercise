@@ -20,7 +20,7 @@ public class TableEntity implements Persistable<String> {
         isNew = false;
     }
 
-    public TableEntity(String name,boolean isNew) {
+    public TableEntity(String name, boolean isNew) {
         this.name = name;
         this.isNew = isNew;
     }

@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController("/api/tables")
-public class TableController {
+public class TableController extends BaseResourceController {
 
     private TableService tableService;
 
@@ -27,15 +27,11 @@ public class TableController {
 
     @PostMapping
     public ResponseEntity<?> add(@Valid @RequestBody TableDto tableDto) {
-
         tableService.addTable(tableDto.getName());
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(tableDto.getName()).toUri();
-
+        URI location = buildURIForCreatedResource(tableDto.getName());
         return ResponseEntity.created(location).build();
     }
+
 
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size) {

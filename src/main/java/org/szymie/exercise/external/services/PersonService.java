@@ -2,6 +2,7 @@ package org.szymie.exercise.external.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.szymie.exercise.application_model.PersonAlreadyExists;
 import org.szymie.exercise.boundaries.Presenter;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePersonRequest;
@@ -21,7 +22,7 @@ public class PersonService {
     public Long addPerson(PersonDto personDto) {
 
         CreatePersonPresenter presenter = new CreatePersonPresenter();
-        createPerson.createPerson(new CreatePersonRequest(personDto.getName(), personDto.getPassword()), presenter);
+        createPerson.createPerson(new CreatePersonRequest(personDto.getUsername(), personDto.getPassword()), presenter);
 
         return presenter.id;
     }
@@ -32,6 +33,11 @@ public class PersonService {
 
         @Override
         public void onResponse(CreatePersonResponse response) {
+
+            if(response.alreadyExists) {
+                throw new PersonAlreadyExists("Person with such username already exists");
+            }
+
             id = response.id;
         }
     }

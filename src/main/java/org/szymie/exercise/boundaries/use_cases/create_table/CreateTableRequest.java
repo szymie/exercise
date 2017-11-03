@@ -4,9 +4,6 @@ public class CreateTableRequest {
 
     public String name;
 
-    public CreateTableRequest() {
-    }
-
     public CreateTableRequest(String name) {
         this.name = name;
     }

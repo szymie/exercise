@@ -1,13 +1,11 @@
 package org.szymie.exercise.external.dtos;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
-import java.nio.file.AccessMode;
 
 public class PersonDto {
 
@@ -15,7 +13,7 @@ public class PersonDto {
     private Long id;
     @NotNull
     @Size(min = 1)
-    private String name;
+    private String username;
     @NotNull
     @Size(min = 1)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -24,9 +22,9 @@ public class PersonDto {
     protected PersonDto() {
     }
 
-    public PersonDto(Long id, String name, String password) {
+    public PersonDto(Long id, String username, String password) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.password = password;
     }
 
@@ -38,12 +36,12 @@ public class PersonDto {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

@@ -8,6 +8,8 @@ import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePersonRequest;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePersonResponse;
 
+import java.util.Optional;
+
 public class CreatePersonImpl implements CreatePerson {
 
     private PersonRepository personRepository;
@@ -22,8 +24,11 @@ public class CreatePersonImpl implements CreatePerson {
     public void createPerson(CreatePersonRequest request, Presenter<CreatePersonResponse> presenter) {
 
         Person newPerson = new Person(null, request.name, passwordEncoder.encode(request.password));
-        Person savedPerson = personRepository.save(newPerson);
+        Optional<Person> savedPersonOptional = personRepository.save(newPerson);
 
-        presenter.onResponse(new CreatePersonResponse(savedPerson.getId()));
+        CreatePersonResponse response = savedPersonOptional.map(person -> new CreatePersonResponse(person.getId(), false))
+                .orElse(new CreatePersonResponse(null, true));
+
+        presenter.onResponse(response);
     }
 }
