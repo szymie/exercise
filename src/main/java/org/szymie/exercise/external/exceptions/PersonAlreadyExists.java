@@ -1,4 +1,4 @@
-package org.szymie.exercise.application_model;
+package org.szymie.exercise.external.exceptions;
 
 public class PersonAlreadyExists extends RuntimeException {
 

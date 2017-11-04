@@ -2,7 +2,7 @@ package org.szymie.exercise.external.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.szymie.exercise.application_model.PersonAlreadyExists;
+import org.szymie.exercise.external.exceptions.PersonAlreadyExists;
 import org.szymie.exercise.boundaries.Presenter;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePersonRequest;

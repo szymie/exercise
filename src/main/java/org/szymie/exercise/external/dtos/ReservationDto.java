@@ -1,11 +1,12 @@
 package org.szymie.exercise.external.dtos;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class ReservationDto {
@@ -17,15 +18,15 @@ public class ReservationDto {
     @NotNull
     @Size(min = 1)
     private String tableName;
-    @Future
-    private Date start;
-    @Future
-    private Date end;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime start;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime end;
 
     protected ReservationDto() {
     }
 
-    public ReservationDto(Long id, Long personId, String tableName, Date start, Date end) {
+    public ReservationDto(Long id, Long personId, String tableName, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.personId = personId;
         this.tableName = tableName;
@@ -57,19 +58,19 @@ public class ReservationDto {
         this.tableName = tableName;
     }
 
-    public Date getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(LocalDateTime start) {
         this.start = start;
     }
 
-    public Date getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(LocalDateTime end) {
         this.end = end;
     }
 }

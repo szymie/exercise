@@ -4,8 +4,10 @@ import org.h2.server.web.WebServlet;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.szymie.exercise.boundaries.adapters.TransactionExecutor;
@@ -15,6 +17,7 @@ import org.szymie.exercise.boundaries.repositories.ReservationRepository;
 import org.szymie.exercise.boundaries.repositories.TableRepository;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_table.CreateTable;
+import org.szymie.exercise.boundaries.use_cases.list_reservations.ListReservations;
 import org.szymie.exercise.boundaries.use_cases.list_tables.ListTables;
 import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservation;
 import org.szymie.exercise.external.adapters.PasswordEncoderImpl;
@@ -23,13 +26,11 @@ import org.szymie.exercise.external.entities.PersonEntity;
 import org.szymie.exercise.external.entities.RoleEntity;
 import org.szymie.exercise.external.repositories.JpaPersonRepository;
 import org.szymie.exercise.external.repositories.JpaRoleRepository;
-import org.szymie.exercise.use_cases.CreatePersonImpl;
-import org.szymie.exercise.use_cases.CreateTableImpl;
-import org.szymie.exercise.use_cases.ListTablesImpl;
-import org.szymie.exercise.use_cases.MakeReservationImpl;
+import org.szymie.exercise.use_cases.*;
 
 import java.util.Collections;
 
+@EntityScan(basePackageClasses = {ExerciseApplication.class, Jsr310JpaConverters.class})
 @SpringBootApplication
 public class ExerciseApplication {
 
@@ -58,6 +59,11 @@ public class ExerciseApplication {
     }
 
     @Bean
+    public ListReservations listReservations(ReservationRepository reservationRepository) {
+        return new ListReservationImpl(reservationRepository);
+    }
+
+    @Bean
     public ListTables listTables(TableRepository tableRepository) {
         return new ListTablesImpl(tableRepository);
     }
@@ -68,8 +74,8 @@ public class ExerciseApplication {
     }
 
     @Bean
-    public MakeReservation makeReservation(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository) {
-        return new MakeReservationImpl(transactionExecutor, reservationRepository);
+    public MakeReservation makeReservation(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, PersonRepository personRepository) {
+        return new MakeReservationImpl(transactionExecutor, reservationRepository, personRepository);
     }
 
 	@Bean

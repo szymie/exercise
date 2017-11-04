@@ -39,6 +39,12 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
+    public Optional<Person> findById(Long id) {
+        return Optional.ofNullable(jpaPersonRepository.findOne(id))
+                .map(personEntity -> new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword()));
+    }
+
+    @Override
     public Optional<Person> save(Person person) {
 
         try {

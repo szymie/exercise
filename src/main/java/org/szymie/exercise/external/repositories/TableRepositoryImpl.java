@@ -27,9 +27,6 @@ public class TableRepositoryImpl implements TableRepository {
 
     @Override
     public List<Table> findAll(int page, int size) {
-
-
-
         return jpaTableRepository.findAll(new PageRequest(page, size))
                 .map(personEntity -> new Table(personEntity.getName()))
                 .getContent();

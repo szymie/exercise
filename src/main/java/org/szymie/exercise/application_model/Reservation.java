@@ -1,6 +1,7 @@
 package org.szymie.exercise.application_model;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Reservation {
@@ -10,13 +11,13 @@ public class Reservation {
     private Person madeBy;
     private Table table;
 
-    private Date start;
-    private Date end;
+    private LocalDateTime start;
+    private LocalDateTime end;
 
     public Reservation() {
     }
 
-    public Reservation(Long id, Person madeBy, Table table, Date start, Date end) {
+    public Reservation(Long id, Person madeBy, Table table, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.madeBy = madeBy;
         this.table = table;
@@ -48,19 +49,19 @@ public class Reservation {
         this.table = table;
     }
 
-    public Date getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(LocalDateTime start) {
         this.start = start;
     }
 
-    public Date getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(LocalDateTime end) {
         this.end = end;
     }
 }

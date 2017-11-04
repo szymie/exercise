@@ -1,7 +1,7 @@
 package org.szymie.exercise.external.entities;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reservations")
@@ -14,19 +14,19 @@ public class ReservationEntity {
     private PersonEntity person;
     @ManyToOne
     private TableEntity table;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date start;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date end;
+    //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime start;
+    //@Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime end;
 
     protected ReservationEntity() {
     }
 
-    public ReservationEntity(PersonEntity person, TableEntity table, Date start, Date end) {
+    public ReservationEntity(PersonEntity person, TableEntity table, LocalDateTime start, LocalDateTime end) {
         this(null, person, table, start, end);
     }
 
-    public ReservationEntity(Long id, PersonEntity person, TableEntity table, Date start, Date end) {
+    public ReservationEntity(Long id, PersonEntity person, TableEntity table, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.person = person;
         this.table = table;
@@ -58,19 +58,19 @@ public class ReservationEntity {
         this.table = table;
     }
 
-    public Date getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(LocalDateTime start) {
         this.start = start;
     }
 
-    public Date getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(LocalDateTime end) {
         this.end = end;
     }
 }

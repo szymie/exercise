@@ -1,6 +1,7 @@
 package org.szymie.exercise.external.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import org.szymie.exercise.application_model.Person;
@@ -11,8 +12,10 @@ import org.szymie.exercise.external.entities.PersonEntity;
 import org.szymie.exercise.external.entities.ReservationEntity;
 import org.szymie.exercise.external.entities.TableEntity;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,20 +34,21 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     }
 
     @Override
-    public Collection<Reservation> findAllByTableNameAndStartBetweenOrEndBetween(String tableName, Date start, Date end) {
+    public Collection<Reservation> findAllByTableNameAndStartBetweenOrEndBetween(String tableName, LocalDateTime start, LocalDateTime end) {
 
-        return jpaReservationRepository.findAllByTableNameAndStartBetweenOrEndBetween(tableName, start, end)
-                .stream()
-                .map(reservationEntity -> {
+        return jpaReservationRepository.findAllByTableNameAndStartBetweenOrEndBetween(tableName, start, end).stream()
+                .map(this::entityToModel).collect(Collectors.toList());
+    }
 
-                    PersonEntity personEntity = reservationEntity.getPerson();
-                    TableEntity tableEntity = reservationEntity.getTable();
+    private Reservation entityToModel(ReservationEntity reservationEntity) {
 
-                    Person person = new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword());
-                    Table table = new Table(tableEntity.getName());
+        PersonEntity personEntity = reservationEntity.getPerson();
+        TableEntity tableEntity = reservationEntity.getTable();
 
-                    return new Reservation(reservationEntity.getId(), person, table, start, end);
-                }).collect(Collectors.toList());
+        Person person = new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword());
+        Table table = new Table(tableEntity.getName());
+
+        return new Reservation(reservationEntity.getId(), person, table, reservationEntity.getStart(), reservationEntity.getEnd());
     }
 
     @Override
@@ -59,5 +63,24 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         return new Reservation(savedReservationEntity.getId(), reservation.getMadeBy(), reservation.getTable(), reservation.getStart(), reservation.getEnd());
     }
 
+    @Override
+    public List<Reservation> findAll(int page, int size) {
+        return jpaReservationRepository.findAll(new PageRequest(page, size))
+                .map(this::entityToModel)
+                .getContent();
+    }
 
+    @Override
+    public List<Reservation> findAllByPersonId(Long personId, int page, int size) {
+        return jpaReservationRepository.findAllByPersonId(personId, new PageRequest(page, size))
+                .map(this::entityToModel)
+                .getContent();
+    }
+
+    @Override
+    public List<Reservation> findAllByTableName(String tableName, int page, int size) {
+        return jpaReservationRepository.findAllByTableName(tableName, new PageRequest(page, size))
+                .map(this::entityToModel)
+                .getContent();
+    }
 }
