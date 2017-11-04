@@ -2,10 +2,8 @@ package org.szymie.exercise.external.entities;
 
 import org.springframework.data.domain.Persistable;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "tables")
@@ -13,6 +11,8 @@ public class TableEntity implements Persistable<String> {
 
     @Id
     private String name;
+    @OneToMany(mappedBy = "table")
+    private List<ReservationEntity> reservations;
     @Transient
     private boolean isNew;
 
@@ -20,8 +20,9 @@ public class TableEntity implements Persistable<String> {
         isNew = false;
     }
 
-    public TableEntity(String name, boolean isNew) {
+    public TableEntity(String name, List<ReservationEntity> reservations, boolean isNew) {
         this.name = name;
+        this.reservations = reservations;
         this.isNew = isNew;
     }
 
@@ -31,6 +32,14 @@ public class TableEntity implements Persistable<String> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
     }
 
     @Override

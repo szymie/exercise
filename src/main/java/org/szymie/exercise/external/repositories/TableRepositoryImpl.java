@@ -9,6 +9,7 @@ import org.szymie.exercise.boundaries.repositories.TableRepository;
 import org.szymie.exercise.external.entities.TableEntity;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +27,9 @@ public class TableRepositoryImpl implements TableRepository {
 
     @Override
     public List<Table> findAll(int page, int size) {
+
+
+
         return jpaTableRepository.findAll(new PageRequest(page, size))
                 .map(personEntity -> new Table(personEntity.getName()))
                 .getContent();
@@ -41,7 +45,7 @@ public class TableRepositoryImpl implements TableRepository {
     public Optional<Table> save(Table table) {
 
         try {
-            TableEntity savedTableEntity = jpaTableRepository.save(new TableEntity(table.getName(), true));
+            TableEntity savedTableEntity = jpaTableRepository.save(new TableEntity(table.getName(), Collections.emptyList(), true));
             return Optional.of(new Table(savedTableEntity.getName()));
         } catch (DataIntegrityViolationException dke) {
             return Optional.empty();

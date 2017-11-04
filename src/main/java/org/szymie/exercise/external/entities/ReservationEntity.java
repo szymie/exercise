@@ -12,12 +12,24 @@ public class ReservationEntity {
     private Long id;
     @ManyToOne
     private PersonEntity person;
+    @ManyToOne
+    private TableEntity table;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date start;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date end;
 
-    public ReservationEntity(Long id, PersonEntity person, Date start, Date end) {
+    protected ReservationEntity() {
+    }
+
+    public ReservationEntity(PersonEntity person, TableEntity table, Date start, Date end) {
+        this(null, person, table, start, end);
+    }
+
+    public ReservationEntity(Long id, PersonEntity person, TableEntity table, Date start, Date end) {
         this.id = id;
         this.person = person;
+        this.table = table;
         this.start = start;
         this.end = end;
     }
@@ -36,6 +48,14 @@ public class ReservationEntity {
 
     public void setPerson(PersonEntity person) {
         this.person = person;
+    }
+
+    public TableEntity getTable() {
+        return table;
+    }
+
+    public void setTable(TableEntity table) {
+        this.table = table;
     }
 
     public Date getStart() {

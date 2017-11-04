@@ -25,6 +25,10 @@ public class PersonEntity  {
     protected PersonEntity() {
     }
 
+    public PersonEntity(Long id) {
+        this(id, null, null, new HashSet<>(), new ArrayList<>());
+    }
+
     public PersonEntity(String username, String password) {
         this(username, password, new HashSet<>());
     }

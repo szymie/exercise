@@ -6,17 +6,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.szymie.exercise.application_model.Person;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.szymie.exercise.boundaries.adapters.TransactionExecutor;
 import org.szymie.exercise.boundaries.adapters.PasswordEncoder;
 import org.szymie.exercise.boundaries.repositories.PersonRepository;
+import org.szymie.exercise.boundaries.repositories.ReservationRepository;
 import org.szymie.exercise.boundaries.repositories.TableRepository;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_table.CreateTable;
 import org.szymie.exercise.boundaries.use_cases.list_tables.ListTables;
+import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservation;
 import org.szymie.exercise.external.adapters.PasswordEncoderImpl;
+import org.szymie.exercise.external.adapters.SpringTransactionExecutor;
 import org.szymie.exercise.external.entities.PersonEntity;
 import org.szymie.exercise.external.entities.RoleEntity;
 import org.szymie.exercise.external.repositories.JpaPersonRepository;
@@ -24,9 +26,9 @@ import org.szymie.exercise.external.repositories.JpaRoleRepository;
 import org.szymie.exercise.use_cases.CreatePersonImpl;
 import org.szymie.exercise.use_cases.CreateTableImpl;
 import org.szymie.exercise.use_cases.ListTablesImpl;
+import org.szymie.exercise.use_cases.MakeReservationImpl;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @SpringBootApplication
 public class ExerciseApplication {
@@ -58,6 +60,16 @@ public class ExerciseApplication {
     @Bean
     public ListTables listTables(TableRepository tableRepository) {
         return new ListTablesImpl(tableRepository);
+    }
+
+    @Bean
+    public TransactionExecutor transactionExecutor(TransactionTemplate transactionTemplate) {
+	    return new SpringTransactionExecutor(transactionTemplate);
+    }
+
+    @Bean
+    public MakeReservation makeReservation(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository) {
+        return new MakeReservationImpl(transactionExecutor, reservationRepository);
     }
 
 	@Bean

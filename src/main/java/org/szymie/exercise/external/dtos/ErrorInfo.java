@@ -1,12 +1,17 @@
 package org.szymie.exercise.external.dtos;
 
-public class ErrorInfo {
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ErrorInfo<T> {
 
     public String url;
-    public String exception;
+    public String exceptionMessage;
+    public T details;
 
-    public ErrorInfo(String url, Exception exception) {
+    public ErrorInfo(String url, Exception exceptionMessage, T details) {
         this.url = url;
-        this.exception = exception.getLocalizedMessage();
+        this.exceptionMessage = exceptionMessage.getLocalizedMessage();
+        this.details = details;
     }
 }

@@ -5,5 +5,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.szymie.exercise.external.entities.PersonEntity;
 import org.szymie.exercise.external.entities.TableEntity;
 
-public interface JpaTableRepository extends PagingAndSortingRepository<TableEntity, String> {
+public interface JpaTableRepository extends JpaRepository<TableEntity, String> {
 }

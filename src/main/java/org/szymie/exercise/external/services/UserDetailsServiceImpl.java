@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<PersonEntity> personEntityOptional = personRepository.findByUsername(username);
 
         if(!personEntityOptional.isPresent()) {
-            throw new UsernameNotFoundException(String.format("Person '%s' does not exist", username));
+            throw new UsernameNotFoundException(String.format("Person with username '%s' does not exist", username));
         } else {
 
             PersonEntity personEntity = personEntityOptional.get();

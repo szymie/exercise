@@ -1,4 +1,4 @@
-package org.szymie.exercise.boundaries;
+package org.szymie.exercise.boundaries.adapters;
 
 import java.util.function.BooleanSupplier;
 
