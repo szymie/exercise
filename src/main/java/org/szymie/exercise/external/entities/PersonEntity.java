@@ -1,7 +1,9 @@
 package org.szymie.exercise.external.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,6 +19,8 @@ public class PersonEntity  {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles;
+    @OneToMany(mappedBy = "person")
+    private List<ReservationEntity> reservations;
 
     protected PersonEntity() {
     }
@@ -30,10 +34,15 @@ public class PersonEntity  {
     }
 
     public PersonEntity(Long id, String username, String password, Set<RoleEntity> roles) {
+        this(id, username, password, roles, new ArrayList<>());
+    }
+
+    public PersonEntity(Long id, String username, String password, Set<RoleEntity> roles, List<ReservationEntity> reservations) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.reservations = reservations;
     }
 
     public Long getId() {
@@ -68,5 +77,12 @@ public class PersonEntity  {
         this.roles = roles;
     }
 
+    public List<ReservationEntity> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<ReservationEntity> reservations) {
+        this.reservations = reservations;
+    }
 }
 
