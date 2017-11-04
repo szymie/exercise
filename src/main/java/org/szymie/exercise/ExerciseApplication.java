@@ -24,10 +24,13 @@ import org.szymie.exercise.external.adapters.PasswordEncoderImpl;
 import org.szymie.exercise.external.adapters.SpringTransactionExecutor;
 import org.szymie.exercise.external.entities.PersonEntity;
 import org.szymie.exercise.external.entities.RoleEntity;
+import org.szymie.exercise.external.entities.TableEntity;
 import org.szymie.exercise.external.repositories.JpaPersonRepository;
 import org.szymie.exercise.external.repositories.JpaRoleRepository;
+import org.szymie.exercise.external.repositories.JpaTableRepository;
 import org.szymie.exercise.use_cases.*;
 
+import java.util.Collection;
 import java.util.Collections;
 
 @EntityScan(basePackageClasses = {ExerciseApplication.class, Jsr310JpaConverters.class})
@@ -79,11 +82,17 @@ public class ExerciseApplication {
     }
 
 	@Bean
-	public CommandLineRunner commandLineRunner(JpaPersonRepository jpaPersonRepository, JpaRoleRepository jpaRoleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	public CommandLineRunner commandLineRunner(JpaPersonRepository jpaPersonRepository, JpaRoleRepository jpaRoleRepository,
+                                               BCryptPasswordEncoder bCryptPasswordEncoder, JpaTableRepository jpaTableRepository) {
 	    return (args) -> {
-            jpaRoleRepository.save(new RoleEntity(null, "CUSTOMER", Collections.emptySet()));
+            RoleEntity customerRoleEntity = jpaRoleRepository.save(new RoleEntity(null, "CUSTOMER", Collections.emptySet()));
             RoleEntity ownerRoleEntity = jpaRoleRepository.save(new RoleEntity(null, "OWNER", Collections.emptySet()));
             jpaPersonRepository.save(new PersonEntity(null, "admin", bCryptPasswordEncoder.encode("admin"), Collections.singleton(ownerRoleEntity)));
+            jpaPersonRepository.save(new PersonEntity(null, "szymon", bCryptPasswordEncoder.encode("qwerty"), Collections.singleton(customerRoleEntity)));
+
+            jpaTableRepository.save(new TableEntity("pierwszy", Collections.emptyList(), true));
+            jpaTableRepository.save(new TableEntity("drugi", Collections.emptyList(), true));
+            jpaTableRepository.save(new TableEntity("trzeci", Collections.emptyList(), true));
         };
     }
 

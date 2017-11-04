@@ -38,15 +38,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/people").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/tables").hasAuthority("OWNER")
-                .antMatchers("/api/**").hasAuthority("CUSTOMER")
+                .antMatchers("/api/**").hasAnyAuthority("CUSTOMER", "OWNER")
+
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/console/**").permitAll()
+
                 .and()
                 .httpBasic()
                 .realmName(realm)
                 //.authenticationEntryPoint(getBasicAuthenticationEntryPoint())
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests().antMatchers("/console/**").permitAll();
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Bean
