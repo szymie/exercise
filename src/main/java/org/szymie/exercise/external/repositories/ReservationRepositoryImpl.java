@@ -83,4 +83,20 @@ public class ReservationRepositoryImpl implements ReservationRepository {
                 .map(this::entityToModel)
                 .getContent();
     }
+
+    @Override
+    public boolean delete(Long id) {
+        return jpaReservationRepository.deleteById(id) > 0;
+        //return true;
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return jpaReservationRepository.exists(id);
+    }
+
+    @Override
+    public Optional<Reservation> findById(Long id) {
+        return jpaReservationRepository.findById(id).map(this::entityToModel);
+    }
 }

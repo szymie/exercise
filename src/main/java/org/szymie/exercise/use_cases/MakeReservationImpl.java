@@ -4,6 +4,7 @@ import org.szymie.exercise.application_model.Person;
 import org.szymie.exercise.application_model.Reservation;
 import org.szymie.exercise.application_model.Table;
 import org.szymie.exercise.boundaries.Presenter;
+import org.szymie.exercise.boundaries.Validator;
 import org.szymie.exercise.boundaries.adapters.TransactionExecutor;
 import org.szymie.exercise.boundaries.repositories.PersonRepository;
 import org.szymie.exercise.boundaries.repositories.ReservationRepository;
@@ -21,24 +22,20 @@ public class MakeReservationImpl implements MakeReservation {
 
     private TransactionExecutor transactionExecutor;
     private ReservationRepository reservationRepository;
-    private TableRepository tableRepository;
-    private PersonRepository personRepository;
+    private Validator<MakeReservationRequest, MakeReservationResponse> validator;
 
-    public MakeReservationImpl(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, TableRepository tableRepository, PersonRepository personRepository) {
+    public MakeReservationImpl(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository,
+                               Validator<MakeReservationRequest, MakeReservationResponse> validator) {
         this.transactionExecutor = transactionExecutor;
         this.reservationRepository = reservationRepository;
-        this.tableRepository = tableRepository;
-        this.personRepository = personRepository;
+        this.validator = validator;
     }
 
     @Override
     public void makeReservation(MakeReservationRequest request, Presenter<MakeReservationResponse> presenter) {
 
-        MakeReservationResponse response = new MakeReservationResponse(true, null, false, false, false, false, false, Collections.emptyList());
 
-        validatePersonId(request, response);
-        validateTableName(request, response);
-        validateStartAndEnd(request, response);
+        MakeReservationResponse response = validator.validate(request);
 
         if(response.successful) {
 
@@ -61,46 +58,5 @@ public class MakeReservationImpl implements MakeReservation {
         }
 
         presenter.onResponse(response);
-    }
-
-    private void validateTableName(MakeReservationRequest request, MakeReservationResponse response) {
-
-        if(!tableRepository.exists(request.tableName)) {
-            response.tableNotExists = true;
-            response.successful = false;
-        }
-    }
-
-    private void validatePersonId(MakeReservationRequest request, MakeReservationResponse response) {
-
-        Person person = personRepository.findById(request.personId)
-                .orElse(new Person(null, "", null));
-
-        if(!person.getUsername().equals(request.username)) {
-            response.notAuthorized = true;
-            response.successful = false;
-        }
-    }
-
-    private void validateStartAndEnd(MakeReservationRequest request, MakeReservationResponse response) {
-
-        LocalDateTime now = LocalDateTime.now();
-
-        if(request.start.isBefore(now) || Duration.between(now, request.start).toMinutes() < 30) {
-            response.tooSoon = true;
-            response.successful = false;
-        }
-
-        if(request.end.isBefore(request.start)) {
-            response.endBeforeStart = true;
-            response.successful = false;
-        }
-
-        long minutes = Duration.between(request.start, request.end).toMinutes();
-
-        if(minutes > 60) {
-            response.tooLong = true;
-            response.successful = false;
-        }
     }
 }

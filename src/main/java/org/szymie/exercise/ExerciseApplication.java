@@ -10,16 +10,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.szymie.exercise.boundaries.Validator;
 import org.szymie.exercise.boundaries.adapters.TransactionExecutor;
 import org.szymie.exercise.boundaries.adapters.PasswordEncoder;
 import org.szymie.exercise.boundaries.repositories.PersonRepository;
 import org.szymie.exercise.boundaries.repositories.ReservationRepository;
 import org.szymie.exercise.boundaries.repositories.TableRepository;
+import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReservation;
+import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReservationRequest;
+import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReservationResponse;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_table.CreateTable;
 import org.szymie.exercise.boundaries.use_cases.list_reservations.ListReservations;
 import org.szymie.exercise.boundaries.use_cases.list_tables.ListTables;
 import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservation;
+import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservationRequest;
+import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservationResponse;
 import org.szymie.exercise.external.adapters.PasswordEncoderImpl;
 import org.szymie.exercise.external.adapters.SpringTransactionExecutor;
 import org.szymie.exercise.external.entities.PersonEntity;
@@ -30,7 +36,6 @@ import org.szymie.exercise.external.repositories.JpaRoleRepository;
 import org.szymie.exercise.external.repositories.JpaTableRepository;
 import org.szymie.exercise.use_cases.*;
 
-import java.util.Collection;
 import java.util.Collections;
 
 @EntityScan(basePackageClasses = {ExerciseApplication.class, Jsr310JpaConverters.class})
@@ -77,8 +82,23 @@ public class ExerciseApplication {
     }
 
     @Bean
-    public MakeReservation makeReservation(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, TableRepository tableRepository, PersonRepository personRepository) {
-        return new MakeReservationImpl(transactionExecutor, reservationRepository, tableRepository, personRepository);
+    public Validator<MakeReservationRequest, MakeReservationResponse> makeReservationValidator(TableRepository tableRepository, PersonRepository personRepository) {
+	    return new MakeReservationValidator(tableRepository, personRepository);
+    }
+
+    @Bean
+    public MakeReservation makeReservation(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, Validator<MakeReservationRequest, MakeReservationResponse> validator) {
+        return new MakeReservationImpl(transactionExecutor, reservationRepository, validator);
+    }
+
+    @Bean
+    public Validator<CancelReservationRequest, CancelReservationResponse> cancelReservationValidator(ReservationRepository reservationRepository) {
+	    return new CancelReservationValidator(reservationRepository);
+    }
+
+    @Bean
+    public CancelReservation cancelReservation(ReservationRepository reservationRepository, Validator<CancelReservationRequest, CancelReservationResponse> validator) {
+        return new CancelReservationImpl(reservationRepository, validator);
     }
 
 	@Bean

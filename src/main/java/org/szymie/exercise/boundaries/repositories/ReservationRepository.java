@@ -14,5 +14,7 @@ public interface ReservationRepository {
     List<Reservation> findAll(int page, int size);
     List<Reservation> findAllByPersonId(Long personId, int page, int size);
     List<Reservation> findAllByTableName(String tableName, int page, int size);
-
+    boolean delete(Long id);
+    boolean exists(Long id);
+    Optional<Reservation> findById(Long id);
 }

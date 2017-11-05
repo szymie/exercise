@@ -35,4 +35,9 @@ public class ReservationController extends BaseResourceController {
         return ResponseEntity.created(location).build();
     }
 
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<?> add(Long reservationId, Principal principal) {
+        reservationService.deleteReservation(principal.getName(), reservationId);
+        return ResponseEntity.noContent().build();
+    }
 }

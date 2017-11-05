@@ -3,10 +3,13 @@ package org.szymie.exercise.external.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.szymie.exercise.application_model.Reservation;
-import org.szymie.exercise.application_model.Table;
+import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReservation;
+import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReservationRequest;
+import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReservationResponse;
 import org.szymie.exercise.boundaries.use_cases.list_reservations.ListReservations;
 import org.szymie.exercise.external.dtos.TableReservationErrorDto;
-import org.szymie.exercise.external.exceptions.TableAlreadyReserved;
+import org.szymie.exercise.external.exceptions.CancelTableReservationException;
+import org.szymie.exercise.external.exceptions.MakeTableReservationException;
 import org.szymie.exercise.boundaries.Presenter;
 import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservation;
 import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservationRequest;
@@ -22,11 +25,13 @@ public class ReservationService {
 
     private MakeReservation makeReservation;
     private ListReservations listReservations;
+    private CancelReservation cancelReservation;
 
     @Autowired
-    public ReservationService(MakeReservation makeReservation, ListReservations listReservations) {
+    public ReservationService(MakeReservation makeReservation, ListReservations listReservations, CancelReservation cancelReservation) {
         this.makeReservation = makeReservation;
         this.listReservations = listReservations;
+        this.cancelReservation = cancelReservation;
     }
 
     public Long addReservation(String loggedAs, ReservationDto reservationDto) {
@@ -58,7 +63,7 @@ public class ReservationService {
 
                 TableReservationErrorDto tableReservationErrorDto = new TableReservationErrorDto(conflictingReservations, errors);
 
-                throw new TableAlreadyReserved("Reservation could not be made", tableReservationErrorDto);
+                throw new MakeTableReservationException("Reservation could not be made", tableReservationErrorDto);
             }
         }
 
@@ -95,6 +100,48 @@ public class ReservationService {
             return errors;
         }
     }
+
+    public void deleteReservation(String loggedAs, Long reservationId) {
+
+        CancelReservationPresenter presenter = new CancelReservationPresenter();
+
+        cancelReservation.cancelReservation(new CancelReservationRequest(loggedAs, reservationId), presenter);
+    }
+
+    private class CancelReservationPresenter implements Presenter<CancelReservationResponse> {
+
+        @Override
+        public void onResponse(CancelReservationResponse response) {
+
+            if(!response.successful) {
+
+                List<String> errors = extractErrors(response);
+
+                TableReservationErrorDto tableReservationErrorDto = new TableReservationErrorDto(null, errors);
+                throw new CancelTableReservationException("It is not possible to cancel this reservation", tableReservationErrorDto);
+            }
+        }
+
+        private List<String> extractErrors(CancelReservationResponse response) {
+
+            List<String> errors = new LinkedList<>();
+
+            if(response.notAuthorized) {
+                errors.add("You cannot make reservation for other person");
+            }
+
+            if(response.notExists) {
+                errors.add("Reservation does not exist");
+            }
+
+            if(response.tooLate) {
+                errors.add("It is too late to cancel this reservation");
+            }
+
+            return errors;
+        }
+    }
+
 
     public List<ReservationDto> getReservations(int page, int size) {
 

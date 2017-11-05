@@ -6,11 +6,11 @@ import org.szymie.exercise.external.dtos.TableReservationErrorDto;
 
 import java.util.Collection;
 
-public class TableAlreadyReserved extends RuntimeException {
+public class MakeTableReservationException extends RuntimeException {
 
     public TableReservationErrorDto tableReservationErrorDto;
 
-    public TableAlreadyReserved(String message, TableReservationErrorDto tableReservationErrorDto) {
+    public MakeTableReservationException(String message, TableReservationErrorDto tableReservationErrorDto) {
         super(message);
         this.tableReservationErrorDto = tableReservationErrorDto;
     }
