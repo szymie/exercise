@@ -71,6 +71,11 @@ public class ReservationService {
                 return errors;
             }
 
+            if(response.tableNotExists) {
+                errors.add("Chosen table does not exist");
+                return errors;
+            }
+
             if(response.tooSoon) {
                 errors.add("Reservation must start at least 30 minutes after current time");
             }

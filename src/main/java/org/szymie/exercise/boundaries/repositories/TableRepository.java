@@ -11,4 +11,5 @@ public interface TableRepository {
     List<Table> findAll(int page, int size);
     Optional<Table> findByName(String name);
     Optional<Table> save(Table person);
+    boolean exists(String tableName);
 }

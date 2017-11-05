@@ -10,4 +10,5 @@ public interface PersonRepository {
     Optional<Person> findByUsername(String username);
     Optional<Person> findById(Long id);
     Optional<Person> save(Person person);
+    boolean exists(Long id);
 }

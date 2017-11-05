@@ -8,6 +8,7 @@ import org.szymie.exercise.application_model.Table;
 import org.szymie.exercise.boundaries.repositories.TableRepository;
 import org.szymie.exercise.external.entities.TableEntity;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +47,17 @@ public class TableRepositoryImpl implements TableRepository {
             return Optional.of(new Table(savedTableEntity.getName()));
         } catch (DataIntegrityViolationException dke) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public boolean exists(String tableName) {
+
+        try {
+            String referenceId = jpaTableRepository.getOne(tableName).getId();
+            return true;
+        } catch (EntityNotFoundException ignore) {
+            return false;
         }
     }
 }

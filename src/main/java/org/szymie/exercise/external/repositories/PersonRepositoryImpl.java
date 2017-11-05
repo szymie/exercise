@@ -8,6 +8,7 @@ import org.szymie.exercise.boundaries.repositories.PersonRepository;
 import org.szymie.exercise.external.entities.PersonEntity;
 import org.szymie.exercise.external.entities.RoleEntity;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -53,6 +54,17 @@ public class PersonRepositoryImpl implements PersonRepository {
             return Optional.of(new Person(savedPersonEntity.getId(), savedPersonEntity.getUsername(), savedPersonEntity.getPassword()));
         } catch (DataIntegrityViolationException dke) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public boolean exists(Long id) {
+
+        try {
+            Long referenceId = jpaPersonRepository.getOne(id).getId();
+            return true;
+        } catch (EntityNotFoundException ignore) {
+            return false;
         }
     }
 }

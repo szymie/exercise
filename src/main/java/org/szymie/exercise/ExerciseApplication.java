@@ -77,8 +77,8 @@ public class ExerciseApplication {
     }
 
     @Bean
-    public MakeReservation makeReservation(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, PersonRepository personRepository) {
-        return new MakeReservationImpl(transactionExecutor, reservationRepository, personRepository);
+    public MakeReservation makeReservation(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, TableRepository tableRepository, PersonRepository personRepository) {
+        return new MakeReservationImpl(transactionExecutor, reservationRepository, tableRepository, personRepository);
     }
 
 	@Bean

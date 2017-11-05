@@ -24,18 +24,20 @@ public class MakeReservationImpl implements MakeReservation {
     private TableRepository tableRepository;
     private PersonRepository personRepository;
 
-    public MakeReservationImpl(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, PersonRepository personRepository) {
+    public MakeReservationImpl(TransactionExecutor transactionExecutor, ReservationRepository reservationRepository, TableRepository tableRepository, PersonRepository personRepository) {
         this.transactionExecutor = transactionExecutor;
         this.reservationRepository = reservationRepository;
+        this.tableRepository = tableRepository;
         this.personRepository = personRepository;
     }
 
     @Override
     public void makeReservation(MakeReservationRequest request, Presenter<MakeReservationResponse> presenter) {
 
-        MakeReservationResponse response = new MakeReservationResponse(true, null, false, false, false, false, Collections.emptyList());
+        MakeReservationResponse response = new MakeReservationResponse(true, null, false, false, false, false, false, Collections.emptyList());
 
         validatePersonId(request, response);
+        validateTableName(request, response);
         validateStartAndEnd(request, response);
 
         if(response.successful) {
@@ -59,6 +61,14 @@ public class MakeReservationImpl implements MakeReservation {
         }
 
         presenter.onResponse(response);
+    }
+
+    private void validateTableName(MakeReservationRequest request, MakeReservationResponse response) {
+
+        if(!tableRepository.exists(request.tableName)) {
+            response.tableNotExists = true;
+            response.successful = false;
+        }
     }
 
     private void validatePersonId(MakeReservationRequest request, MakeReservationResponse response) {
