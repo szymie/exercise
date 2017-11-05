@@ -5,11 +5,13 @@ import org.szymie.exercise.boundaries.Validator;
 import org.szymie.exercise.boundaries.repositories.PersonRepository;
 import org.szymie.exercise.boundaries.repositories.TableRepository;
 import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservationRequest;
+import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservationErrors;
 import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservationResponse;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.EnumSet;
 
 public class MakeReservationValidator implements Validator<MakeReservationRequest, MakeReservationResponse> {
 
@@ -24,15 +26,14 @@ public class MakeReservationValidator implements Validator<MakeReservationReques
     private void validateTableName(MakeReservationRequest request, MakeReservationResponse response) {
 
         if(!tableRepository.exists(request.tableName)) {
-            response.tableNotExists = true;
-            response.successful = false;
+            response.setTableNotExistsTrue();
         }
     }
 
     @Override
     public MakeReservationResponse validate(MakeReservationRequest request) {
 
-        MakeReservationResponse response = new MakeReservationResponse(true, null, false, false, false, false, false, Collections.emptyList());
+        MakeReservationResponse response = new MakeReservationResponse(EnumSet.noneOf(MakeReservationErrors.class), null, Collections.emptyList());
 
         validatePersonId(request, response);
         validateTableName(request, response);
@@ -44,11 +45,10 @@ public class MakeReservationValidator implements Validator<MakeReservationReques
     private void validatePersonId(MakeReservationRequest request, MakeReservationResponse response) {
 
         Person person = personRepository.findById(request.personId)
-                .orElse(new Person(null, "", null));
+                .orElse(new Person(null, "", null, null));
 
         if(!person.getUsername().equals(request.username)) {
-            response.notAuthorized = true;
-            response.successful = false;
+            response.setNotAuthorizedTrue();
         }
     }
 
@@ -57,20 +57,17 @@ public class MakeReservationValidator implements Validator<MakeReservationReques
         LocalDateTime now = LocalDateTime.now();
 
         if(request.start.isBefore(now) || Duration.between(now, request.start).toMinutes() < 30) {
-            response.tooSoon = true;
-            response.successful = false;
+            response.setTooSoonTrue();
         }
 
         if(request.end.isBefore(request.start)) {
-            response.endBeforeStart = true;
-            response.successful = false;
+            response.setEndBeforeStartTrue();
         }
 
         long minutes = Duration.between(request.start, request.end).toMinutes();
 
         if(minutes > 60) {
-            response.tooLong = true;
-            response.successful = false;
+            response.setTooLongTrue();
         }
     }
 }

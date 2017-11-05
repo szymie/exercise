@@ -149,7 +149,7 @@ public class ReservationService {
 
         listReservations.listReservations(page, size, presenter);
 
-        return presenter.tables.stream()
+        return presenter.elements.stream()
                 .map(this::modelToDto)
                 .collect(Collectors.toList());
     }
@@ -165,7 +165,7 @@ public class ReservationService {
 
         listReservations.listReservationsForPerson(personId, page, size, presenter);
 
-        return presenter.tables.stream()
+        return presenter.elements.stream()
                 .map(this::modelToDto)
                 .collect(Collectors.toList());
     }
@@ -176,7 +176,7 @@ public class ReservationService {
 
         listReservations.listReservationsForTable(tableName, page, size, presenter);
 
-        return presenter.tables.stream()
+        return presenter.elements.stream()
                 .map(this::modelToDto)
                 .collect(Collectors.toList());
     }

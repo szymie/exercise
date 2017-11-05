@@ -10,6 +10,7 @@ import org.szymie.exercise.application_model.Table;
 import org.szymie.exercise.boundaries.repositories.ReservationRepository;
 import org.szymie.exercise.external.entities.PersonEntity;
 import org.szymie.exercise.external.entities.ReservationEntity;
+import org.szymie.exercise.external.entities.RoleEntity;
 import org.szymie.exercise.external.entities.TableEntity;
 
 import java.time.LocalDateTime;
@@ -45,7 +46,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         PersonEntity personEntity = reservationEntity.getPerson();
         TableEntity tableEntity = reservationEntity.getTable();
 
-        Person person = new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword());
+        Person person = new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword(), personEntity.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toSet()));
         Table table = new Table(tableEntity.getName());
 
         return new Reservation(reservationEntity.getId(), person, table, reservationEntity.getStart(), reservationEntity.getEnd());
@@ -87,7 +88,6 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public boolean delete(Long id) {
         return jpaReservationRepository.deleteById(id) > 0;
-        //return true;
     }
 
     @Override

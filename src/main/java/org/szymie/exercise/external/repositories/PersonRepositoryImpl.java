@@ -2,6 +2,7 @@ package org.szymie.exercise.external.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.szymie.exercise.application_model.Person;
 import org.szymie.exercise.boundaries.repositories.PersonRepository;
@@ -11,6 +12,7 @@ import org.szymie.exercise.external.entities.RoleEntity;
 import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,22 +29,34 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
+    public List<Person> findAll(int page, int size) {
+        return jpaPersonRepository.findAll(new PageRequest(page, size))
+                .map(this::entityToModel)
+                .getContent();
+    }
+
+    @Override
     public Collection<Person> findAll() {
         return jpaPersonRepository.findAll().stream()
-                .map(personEntity -> new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword()))
+                .map(this::entityToModel)
                 .collect(Collectors.toList());
+    }
+
+    private Person entityToModel(PersonEntity personEntity) {
+        return new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword(),
+                personEntity.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toSet()));
     }
 
     @Override
     public Optional<Person> findByUsername(String username) {
         return jpaPersonRepository.findByUsername(username)
-                .map(personEntity -> new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword()));
+                .map(this::entityToModel);
     }
 
     @Override
     public Optional<Person> findById(Long id) {
         return Optional.ofNullable(jpaPersonRepository.findOne(id))
-                .map(personEntity -> new Person(personEntity.getId(), personEntity.getUsername(), personEntity.getPassword()));
+                .map(this::entityToModel);
     }
 
     @Override
@@ -51,7 +65,7 @@ public class PersonRepositoryImpl implements PersonRepository {
         try {
             RoleEntity customerRole = jpaRoleRepository.findByName("CUSTOMER");
             PersonEntity savedPersonEntity = jpaPersonRepository.save(new PersonEntity(person.getUsername(), person.getPassword(), Collections.singleton(customerRole)));
-            return Optional.of(new Person(savedPersonEntity.getId(), savedPersonEntity.getUsername(), savedPersonEntity.getPassword()));
+            return Optional.of(entityToModel(savedPersonEntity));
         } catch (DataIntegrityViolationException dke) {
             return Optional.empty();
         }

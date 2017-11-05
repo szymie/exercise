@@ -8,6 +8,7 @@ import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePersonRequest;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePersonResponse;
 
+import java.util.Collections;
 import java.util.Optional;
 
 public class CreatePersonImpl implements CreatePerson {
@@ -23,7 +24,7 @@ public class CreatePersonImpl implements CreatePerson {
     @Override
     public void createPerson(CreatePersonRequest request, Presenter<CreatePersonResponse> presenter) {
 
-        Person newPerson = new Person(null, request.name, passwordEncoder.encode(request.password));
+        Person newPerson = new Person(request.name, passwordEncoder.encode(request.password), Collections.singleton("CUSTOMER"));
         Optional<Person> savedPersonOptional = personRepository.save(newPerson);
 
         CreatePersonResponse response = savedPersonOptional.map(person -> new CreatePersonResponse(person.getId(), false))

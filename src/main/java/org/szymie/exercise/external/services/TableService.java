@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.szymie.exercise.application_model.Table;
 import org.szymie.exercise.external.dtos.TableDto;
 import org.szymie.exercise.external.exceptions.TableAlreadyExists;
-import org.szymie.exercise.boundaries.Presenter;
 import org.szymie.exercise.boundaries.use_cases.create_table.CreateTable;
 import org.szymie.exercise.boundaries.use_cases.create_table.CreateTableRequest;
 import org.szymie.exercise.boundaries.use_cases.list_tables.ListTables;
@@ -39,7 +38,7 @@ public class TableService {
         ListPresenter<Table> presenter = new ListPresenter<>();
         listTables.listTables(page, size, presenter);
 
-        return presenter.tables.stream()
+        return presenter.elements.stream()
                 .map(table -> new TableDto(table.getName()))
                 .collect(Collectors.toList());
     }

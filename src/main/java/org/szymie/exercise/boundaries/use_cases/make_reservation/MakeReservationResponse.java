@@ -3,6 +3,7 @@ package org.szymie.exercise.boundaries.use_cases.make_reservation;
 import org.szymie.exercise.application_model.Reservation;
 
 import java.util.Collection;
+import java.util.EnumSet;
 
 public class MakeReservationResponse {
 
@@ -24,5 +25,46 @@ public class MakeReservationResponse {
         this.endBeforeStart = endBeforeStart;
         this.tooLong = tooLong;
         this.conflictingReservations = conflictingReservations;
+    }
+
+
+    public MakeReservationResponse(EnumSet<MakeReservationErrors> errors, Long reservationId, Collection<Reservation> conflictingReservations) {
+        this.successful = errors.isEmpty();
+        this.reservationId = reservationId;
+        this.notAuthorized = errors.contains(MakeReservationErrors.NOT_AUTHORIZED);
+        this.tableNotExists = errors.contains(MakeReservationErrors.TALBE_NOT_EXISTS);
+        this.tooSoon = errors.contains(MakeReservationErrors.TOO_SOON);
+        this.endBeforeStart = errors.contains(MakeReservationErrors.END_BEFORE_START);
+        this.tooLong = errors.contains(MakeReservationErrors.TOO_LONG);
+        this.conflictingReservations = conflictingReservations;
+    }
+
+    public void setNotAuthorizedTrue() {
+        notAuthorized = true;
+        setSuccessfulFalse();
+    }
+
+    public void setTableNotExistsTrue() {
+        tableNotExists = true;
+        setSuccessfulFalse();
+    }
+
+    public void setTooSoonTrue() {
+        tooSoon = true;
+        setSuccessfulFalse();
+    }
+
+    public void setEndBeforeStartTrue() {
+        endBeforeStart = true;
+        setSuccessfulFalse();
+    }
+
+    public void setTooLongTrue() {
+        this.tooLong = true;
+        setSuccessfulFalse();
+    }
+
+    private void setSuccessfulFalse() {
+        successful = false;
     }
 }

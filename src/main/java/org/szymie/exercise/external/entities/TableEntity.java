@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "tables")
+@Table(name = "elements")
 public class TableEntity implements Persistable<String> {
 
     @Id

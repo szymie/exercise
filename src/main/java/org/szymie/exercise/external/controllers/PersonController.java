@@ -30,6 +30,11 @@ public class PersonController extends BaseResourceController {
         return ResponseEntity.created(location).build();
     }
 
+    @GetMapping
+    public ResponseEntity<?> getPeople(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok(personService.getPeople(page, size));
+    }
+
     @GetMapping("/{personId}/reservations")
     public ResponseEntity<?> getReservations(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size,
                                              @PathVariable Long personId) {

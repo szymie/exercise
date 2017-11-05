@@ -17,6 +17,10 @@ public class Reservation {
     public Reservation() {
     }
 
+    public Reservation(Person madeBy, Table table, LocalDateTime start, LocalDateTime end) {
+        this(null, madeBy, table, start, end);
+    }
+
     public Reservation(Long id, Person madeBy, Table table, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.madeBy = madeBy;

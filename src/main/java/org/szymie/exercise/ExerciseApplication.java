@@ -21,6 +21,7 @@ import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReserva
 import org.szymie.exercise.boundaries.use_cases.cancel_reservation.CancelReservationResponse;
 import org.szymie.exercise.boundaries.use_cases.create_person.CreatePerson;
 import org.szymie.exercise.boundaries.use_cases.create_table.CreateTable;
+import org.szymie.exercise.boundaries.use_cases.list_people.ListPeople;
 import org.szymie.exercise.boundaries.use_cases.list_reservations.ListReservations;
 import org.szymie.exercise.boundaries.use_cases.list_tables.ListTables;
 import org.szymie.exercise.boundaries.use_cases.make_reservation.MakeReservation;
@@ -37,6 +38,8 @@ import org.szymie.exercise.external.repositories.JpaTableRepository;
 import org.szymie.exercise.use_cases.*;
 
 import java.util.Collections;
+import java.util.Optional;
+
 
 @EntityScan(basePackageClasses = {ExerciseApplication.class, Jsr310JpaConverters.class})
 @SpringBootApplication
@@ -92,13 +95,18 @@ public class ExerciseApplication {
     }
 
     @Bean
-    public Validator<CancelReservationRequest, CancelReservationResponse> cancelReservationValidator(ReservationRepository reservationRepository) {
-	    return new CancelReservationValidator(reservationRepository);
+    public Validator<CancelReservationRequest, CancelReservationResponse> cancelReservationValidator(ReservationRepository reservationRepository, PersonRepository personRepository) {
+	    return new CancelReservationValidator(reservationRepository, personRepository);
     }
 
     @Bean
     public CancelReservation cancelReservation(ReservationRepository reservationRepository, Validator<CancelReservationRequest, CancelReservationResponse> validator) {
         return new CancelReservationImpl(reservationRepository, validator);
+    }
+
+    @Bean
+    public ListPeople listPeople(PersonRepository personRepository) {
+        return new ListPeopleImpl(personRepository);
     }
 
 	@Bean
@@ -109,15 +117,18 @@ public class ExerciseApplication {
             RoleEntity ownerRoleEntity = jpaRoleRepository.save(new RoleEntity(null, "OWNER", Collections.emptySet()));
             jpaPersonRepository.save(new PersonEntity(null, "admin", bCryptPasswordEncoder.encode("admin"), Collections.singleton(ownerRoleEntity)));
             jpaPersonRepository.save(new PersonEntity(null, "szymon", bCryptPasswordEncoder.encode("qwerty"), Collections.singleton(customerRoleEntity)));
+            jpaPersonRepository.save(new PersonEntity(null, "user", bCryptPasswordEncoder.encode("qwerty"), Collections.singleton(customerRoleEntity)));
 
             jpaTableRepository.save(new TableEntity("pierwszy", Collections.emptyList(), true));
             jpaTableRepository.save(new TableEntity("drugi", Collections.emptyList(), true));
             jpaTableRepository.save(new TableEntity("trzeci", Collections.emptyList(), true));
+
+            Class.forName("org.h2.Driver");
         };
     }
 
     @Bean
-    ServletRegistrationBean h2servletRegistration() {
+    public ServletRegistrationBean h2servletRegistration() {
         ServletRegistrationBean registrationBean = new ServletRegistrationBean(new WebServlet());
         registrationBean.addUrlMappings("/console/*");
         return registrationBean;

@@ -37,16 +37,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/people").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/tables").hasAuthority("OWNER")
+                .antMatchers(HttpMethod.POST, "/api/elements").hasAuthority("OWNER")
                 .antMatchers("/api/**").hasAnyAuthority("CUSTOMER", "OWNER")
-
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/console/**").permitAll()
-
                 .and()
                 .httpBasic()
                 .realmName(realm)
-                //.authenticationEntryPoint(getBasicAuthenticationEntryPoint())
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

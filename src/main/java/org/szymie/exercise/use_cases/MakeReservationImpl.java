@@ -46,7 +46,7 @@ public class MakeReservationImpl implements MakeReservation {
                 if(conflictingReservations.isEmpty()) {
 
                     Reservation savedReservation = reservationRepository.save(
-                            new Reservation(null, new Person(request.personId, null, null), new Table(request.tableName), request.start, request.end));
+                            new Reservation(new Person(request.personId), new Table(request.tableName), request.start, request.end));
                     response.reservationId = savedReservation.getId();
                 } else {
                     response.successful = false;

@@ -5,10 +5,10 @@ import java.util.List;
 
 public class ListPresenter<T> implements Presenter<List<T>> {
 
-    public List<T> tables;
+    public List<T> elements;
 
     @Override
     public void onResponse(List<T> response) {
-        tables = response;
+        elements = response;
     }
 }
