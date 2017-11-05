@@ -48,25 +48,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
-    @Bean
-    public BasicAuthenticationEntryPoint getBasicAuthenticationEntryPoint() {
-        return new CustomBasicAuthenticationEntryPoint();
-    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-                //.and()
-                //.authenticationProvider(getDaoAuthenticationProvider());
-    }
-
-    public DaoAuthenticationProvider getDaoAuthenticationProvider() {
-
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
-
-        return authenticationProvider;
     }
 }

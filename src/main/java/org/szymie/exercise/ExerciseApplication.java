@@ -38,8 +38,6 @@ import org.szymie.exercise.external.repositories.JpaTableRepository;
 import org.szymie.exercise.use_cases.*;
 
 import java.util.Collections;
-import java.util.Optional;
-
 
 @EntityScan(basePackageClasses = {ExerciseApplication.class, Jsr310JpaConverters.class})
 @SpringBootApplication

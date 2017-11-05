@@ -18,9 +18,6 @@ public class JacksonConfig {
                 .registerModule(new Jdk8Module())
                 .registerModule(new JavaTimeModule());
 
-        //mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        //mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
-
         return mapper;
     }
 }
