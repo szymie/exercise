@@ -34,7 +34,6 @@ public class MakeReservationImpl implements MakeReservation {
     @Override
     public void makeReservation(MakeReservationRequest request, Presenter<MakeReservationResponse> presenter) {
 
-
         MakeReservationResponse response = validator.validate(request);
 
         if(response.successful) {
